@@ -19,49 +19,75 @@ function createTray(w=24, h=40, l=30, x=2, y=2, t=1) {
 	for (let yi = 0; yi < y; yi++) {
 		let yoffset = yi*(h*2+l+t);
 
+		let dashoffset = 0;
 		// horizontal fold lines
-		for (let yline of [0, h, h+t, 2*h+t, 2*h+t+l]) {
-			let fold = document.createElementNS(svgns, "line");
-			fold.setAttribute("x1", (xoffset+h));
-			fold.setAttribute("y1", yoffset+yline);
-			fold.setAttribute("x2", xoffset+h+w);
-			fold.setAttribute("y2", yoffset+yline);
-			fold.setAttribute("style", "fill: none; stroke: black; stroke-dasharray: 1,3; stroke-width: 0.5");
-			svg.appendChild(fold);
+		for (let yline of [0, h, h+t, 2*h+t]) {
+			let dof = dashoffset;
+			while (dof <= w - 2) {
+				let fold = document.createElementNS(svgns, "line");
+				fold.setAttribute("x1", (xoffset+h+dof));
+				fold.setAttribute("y1", yoffset+yline);
+				fold.setAttribute("x2", xoffset+h+1+dof);
+				fold.setAttribute("y2", yoffset+yline);
+				fold.setAttribute("style", "fill: none; stroke: black; stroke-width: 0.5");
+				svg.appendChild(fold);
+				dof += 4;
+
+			}
+			dashoffset = 2-dashoffset;
 		}
 		
-		// left side of container fold lines
-		let left = document.createElementNS(svgns, "rect");
-		left.setAttribute("width", h);
-		left.setAttribute("height", l);
-		left.setAttribute("x", xoffset);
-		left.setAttribute("y", yoffset+(h*2)+t);
-		left.setAttribute("style", "fill: none; stroke: black; stroke-dasharray: 1,3; stroke-width: 0.5");
-		svg.appendChild(left);
+		// sides of container horizontal fold lines
+		for (let xs of [xoffset, xoffset+h+w]) {
+		for (let ys of [yoffset+(h*2)+t, yoffset+(h*2)+t+l]) {
+			let dof = 0;
+			while (dof <= h - 2) {
+				let fold = document.createElementNS(svgns, "line");
+				fold.setAttribute("x1", xs+dof);
+				fold.setAttribute("y1", ys);
+				fold.setAttribute("x2", xs+1+dof);
+				fold.setAttribute("y2", ys);
+				fold.setAttribute("style", "fill: none; stroke: black; stroke-width: 0.5");
+				svg.appendChild(fold);
 
+				dof += 4;
+			}
+		}
+		}
 
-		// right side of container fold lines
-		let right = document.createElementNS(svgns, "rect");
-		right.setAttribute("width", h);
-		right.setAttribute("height", l);
-		right.setAttribute("x", xoffset+(h+w));
-		right.setAttribute("y", yoffset+(h*2+t));
-		right.setAttribute("style", "fill: none; stroke: black; stroke-dasharray: 1,3; stroke-width: 0.5");
-		svg.appendChild(right);
+		// sides of container vertical fold lines
+		for (let xs of [0, h, h+w, 2*h+w]) {
+			let dof = 0;
+			while (dof <= l - 2) {
+				let fold = document.createElementNS(svgns, "line");
+				fold.setAttribute("x1", xoffset+xs);
+				fold.setAttribute("y1", yoffset+2*h+t+dof);
+				fold.setAttribute("x2", xoffset+xs);
+				fold.setAttribute("y2", yoffset+2*h+t+1+dof);
+				fold.setAttribute("style", "fill: none; stroke: black; stroke-width: 0.5");
+				svg.appendChild(fold);
 
+				dof += 4;
+			}
+		}
 
 
 	
 		if (yi == y-1) {
 		// horizontal fold lines
-		for (let yline of [h, h+t]) {
-			let fold = document.createElementNS(svgns, "line");
-			fold.setAttribute("x1", (xoffset+h));
-			fold.setAttribute("y1", yoffset+2*h+t+l+yline);
-			fold.setAttribute("x2", xoffset+h+w);
-			fold.setAttribute("y2", yoffset+2*h+t+l+yline);
-			fold.setAttribute("style", "fill: none; stroke: black; stroke-dasharray: 1,3; stroke-width: 0.5");
-			svg.appendChild(fold);
+		for (let yline of [0, h, h+t]) {
+			let dof = dashoffset;
+			while (dof <= w - 2) {
+				let fold = document.createElementNS(svgns, "line");
+				fold.setAttribute("x1", (xoffset+h+dof));
+				fold.setAttribute("y1", yoffset+2*h+t+l+yline);
+				fold.setAttribute("x2", xoffset+h+1+dof);
+				fold.setAttribute("y2", yoffset+2*h+t+l+yline);
+				fold.setAttribute("style", "fill: none; stroke: black; stroke-width: 0.5");
+				svg.appendChild(fold);
+				dof += 4;
+			}
+			dashoffset = 2-dashoffset;
 		}
 		}
 	}
@@ -153,11 +179,11 @@ createTray(parseInt(document.getElementById("w").value), parseInt(document.getEl
 <body>
 
 <table>
-<tr><td>Container width (mm)</td><td><input id=w value=24></input></td></tr>
-<tr><td>Container length (mm)</td><td><input id=l value=44></input></td></tr>
-<tr><td>Container height (mm)</td><td><input id=h value=34></input></td></tr>
+<tr><td>Container width (mm)</td><td><input id=w value=22></input></td></tr>
+<tr><td>Container length (mm)</td><td><input id=l value=38></input></td></tr>
+<tr><td>Container height (mm)</td><td><input id=h value=38></input></td></tr>
 <tr><td>-</td></tr>
-<tr><td>Cardboard thickness (mm)</td><td><input id=t value=1></input></td></tr>
+<tr><td>Cardboard fold thickness (mm)</td><td><input id=t value=2></input></td></tr>
 <tr><td>Number of containers left-right</td><td><input id=x value=2></input></td></tr>
 <tr><td>Number of containers top-bottom</td><td><input id=y value=2></input></td></tr>
 
