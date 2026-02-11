@@ -140,6 +140,8 @@ function createTray(w=24, h=40, l=30, x=2, y=2, t=1) {
 
 	let blob = new Blob([svg.outerHTML], {type: 'image/svg+xml'});
 	document.getElementById("downloadlink").href = URL.createObjectURL(blob);
+    document.getElementById("downloadlink").download = "lasertray.svg";
+
 }
 
 function button() {
@@ -162,7 +164,7 @@ createTray(parseInt(document.getElementById("w").value), parseInt(document.getEl
 
 <tr><td><button onclick="button()">Submit</button></td>
 <td>
-<a id="downloadlink">Right click and save</a>
+<a id="downloadlink">Download SVG</a>
 </td></tr>
 </table>
 
