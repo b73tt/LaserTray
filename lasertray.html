@@ -1,0 +1,172 @@
+<html>
+<head>
+<script>
+const svgns = "http://www.w3.org/2000/svg";
+function createTray(w=24, h=40, l=30, x=2, y=2, t=1) {
+	console.log(w, h, l, x, y, t);
+	var svg = document.getElementById("svg");
+
+	svg.innerHTML="";
+
+	svg.setAttribute("width", x*(h*2+t+w) + "mm");
+	svg.setAttribute("height", y*(h*2+t+l)+(h*2+t) + "mm");
+	svg.setAttribute("viewBox", "0 0 " + (x*(h*2+t+w)) + " " + (y*(h*2+t+l)+(h*2+t)));
+	
+	
+// do fold lines first
+	for (let xi = 0; xi < x; xi++) {
+		let xoffset = xi*(h*2+w+t);
+	for (let yi = 0; yi < y; yi++) {
+		let yoffset = yi*(h*2+l+t);
+
+		// horizontal fold lines
+		for (let yline of [0, h, h+t, 2*h+t, 2*h+t+l]) {
+			let fold = document.createElementNS(svgns, "line");
+			fold.setAttribute("x1", (xoffset+h));
+			fold.setAttribute("y1", yoffset+yline);
+			fold.setAttribute("x2", xoffset+h+w);
+			fold.setAttribute("y2", yoffset+yline);
+			fold.setAttribute("style", "fill: none; stroke: black; stroke-dasharray: 1,3; stroke-width: 0.5");
+			svg.appendChild(fold);
+		}
+		
+		// left side of container fold lines
+		let left = document.createElementNS(svgns, "rect");
+		left.setAttribute("width", h);
+		left.setAttribute("height", l);
+		left.setAttribute("x", xoffset);
+		left.setAttribute("y", yoffset+(h*2)+t);
+		left.setAttribute("style", "fill: none; stroke: black; stroke-dasharray: 1,3; stroke-width: 0.5");
+		svg.appendChild(left);
+
+
+		// right side of container fold lines
+		let right = document.createElementNS(svgns, "rect");
+		right.setAttribute("width", h);
+		right.setAttribute("height", l);
+		right.setAttribute("x", xoffset+(h+w));
+		right.setAttribute("y", yoffset+(h*2+t));
+		right.setAttribute("style", "fill: none; stroke: black; stroke-dasharray: 1,3; stroke-width: 0.5");
+		svg.appendChild(right);
+
+
+
+	
+		if (yi == y-1) {
+		// horizontal fold lines
+		for (let yline of [h, h+t]) {
+			let fold = document.createElementNS(svgns, "line");
+			fold.setAttribute("x1", (xoffset+h));
+			fold.setAttribute("y1", yoffset+2*h+t+l+yline);
+			fold.setAttribute("x2", xoffset+h+w);
+			fold.setAttribute("y2", yoffset+2*h+t+l+yline);
+			fold.setAttribute("style", "fill: none; stroke: black; stroke-dasharray: 1,3; stroke-width: 0.5");
+			svg.appendChild(fold);
+		}
+		}
+	}
+	}
+
+
+
+// now do cut lines
+	for (let xi = 0; xi < x; xi++) {
+		let xoffset = xi*(h*2+w+t);
+	for (let yi = 0; yi < y; yi++) {
+		let yoffset = yi*(h*2+l+t);
+
+		//tl cut line points
+		let tl = xoffset+","+(yoffset+h*2+t)+" ";
+		tl += xoffset+","+(yoffset+h*2+t-(w/2))+" ";
+		tl += (xoffset+h)+","+(yoffset+h*2+t)+" ";
+		tl += (xoffset+h)+","+(yoffset)+" ";
+
+		let ltpoly = document.createElementNS(svgns, "polyline");
+		ltpoly.setAttribute("points", tl);
+		ltpoly.setAttribute("style", "fill: none; stroke: black; stroke-width: 0.5");
+		svg.appendChild(ltpoly);
+
+
+		//tr cut line points
+		let tr = (xoffset+h+w)+","+yoffset+" ";
+		tr += (xoffset+h+w)+","+(yoffset+h*2+t)+" ";
+		tr += (xoffset+h*2+w)+","+(yoffset+h*2+t-(w/2))+" ";
+		tr += (xoffset+h*2+w)+","+(yoffset+h*2+t)+" ";
+
+		let trpoly = document.createElementNS(svgns, "polyline");
+		trpoly.setAttribute("points", tr);
+		trpoly.setAttribute("style", "fill: none; stroke: black; stroke-width: 0.5");
+		svg.appendChild(trpoly);
+
+		// bl cut line points
+		let bl = xoffset+","+(yoffset+h*2+t+l)+" ";
+		bl += xoffset+","+(yoffset+h*2+t+l+(w/2))+" ";
+		bl += (xoffset+h)+","+(yoffset+h*2+t+l)+" ";
+
+		let blpoly = document.createElementNS(svgns, "polyline");
+		blpoly.setAttribute("points", bl);
+		blpoly.setAttribute("style", "fill: none; stroke: black; stroke-width: 0.5");
+		svg.appendChild(blpoly);
+
+		// br cut line points
+		let br = (xoffset+h+w)+","+(yoffset+h*2+t+l)+" ";
+		br += (xoffset+h*2+w)+","+(yoffset+h*2+t+l+(w/2))+" ";
+		br += (xoffset+h*2+w)+","+(yoffset+h*2+t+l)+" ";
+
+		let brpoly = document.createElementNS(svgns, "polyline");
+		brpoly.setAttribute("points", br);
+		brpoly.setAttribute("style", "fill: none; stroke: black; stroke-width: 0.5");
+		svg.appendChild(brpoly);
+
+
+
+	
+		if (yi == y-1) {
+		// two bottom flaps inc fold lines 
+		let b = (xoffset+h) + "," + (yoffset + 2*h+t+l) + " ";
+		b += (xoffset+h) + "," + (yoffset + 4*h+2*t+l) + " ";
+		b += (xoffset+h+w) + "," + (yoffset + 4*h+2*t+l) + " ";
+		b += (xoffset+h+w) + "," + (yoffset + 2*h+t+l) + " ";
+		let bpoly = document.createElementNS(svgns, "polyline");
+		bpoly.setAttribute("points", b);
+		bpoly.setAttribute("style", "fill: none; stroke: black; stroke-width: 0.5");
+		svg.appendChild(bpoly);
+		}
+
+
+
+	}
+	}
+
+	let blob = new Blob([svg.outerHTML], {type: 'image/svg+xml'});
+	document.getElementById("downloadlink").href = URL.createObjectURL(blob);
+}
+
+function button() {
+createTray(parseInt(document.getElementById("w").value), parseInt(document.getElementById("h").value), parseInt(document.getElementById("l").value), parseInt(document.getElementById("x").value), parseInt(document.getElementById("y").value), parseInt(document.getElementById("t").value));
+}
+
+</script>
+</head>
+<body>
+
+<table>
+<tr><td>Container width (mm)</td><td><input id=w value=24></input></td></tr>
+<tr><td>Container length (mm)</td><td><input id=l value=44></input></td></tr>
+<tr><td>Container height (mm)</td><td><input id=h value=34></input></td></tr>
+<tr><td>-</td></tr>
+<tr><td>Cardboard thickness (mm)</td><td><input id=t value=1></input></td></tr>
+<tr><td>Number of containers left-right</td><td><input id=x value=2></input></td></tr>
+<tr><td>Number of containers top-bottom</td><td><input id=y value=2></input></td></tr>
+
+
+<tr><td><button onclick="button()">Submit</button></td>
+<td>
+<a id="downloadlink">Right click and save</a>
+</td></tr>
+</table>
+
+
+<svg id="svg" xmlns="http://www.w3.org/2000/svg" width=400 height=400></svg>
+</body>
+</html>
